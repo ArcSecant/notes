@@ -1,0 +1,262 @@
+\documentclass[12pt]{book}
+
+% save paper
+\usepackage{fullpage}
+
+% clickable table of contents
+\usepackage[hidelinks, linktoc=all]{hyperref}
+
+% math
+\usepackage{amsmath,amsfonts,amsthm,amssymb,bbm,mathrsfs,tikz-cd}
+
+% nice lists
+\usepackage[shortlabels]{enumitem}
+
+%% environments
+
+% definition
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{defexample}{Example}[definition]
+
+% theorem
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}{Corollary}[definition]
+\theoremstyle{definition}
+\newtheorem{thmexample}[corollary]{Example}
+
+% misc
+\newtheorem{claim}[definition]{Claim}
+\newtheorem*{remark}{Remark}
+
+%% math commands
+
+% caligraphic letters (script letters)
+\newcommand{\sB}{\mathcal{B}}
+\newcommand{\sU}{\mathcal{U}}
+
+% common sets (blackboard bold)
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+
+% complex conjugate
+\newcommand{\conj}[1]{\overline{#1}}
+
+% generally useful stuff
+\newcommand{\paren}[1]{\left(#1\right)}
+\newcommand{\setof}[1]{\left\{#1\right\}}
+\newcommand{\textfn}[2]{\text{#1}\paren{#2}}
+\newcommand{\spanof}[1]{\text{span}\setof{#1}}
+
+% image, rank, etc.
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\nul}{null}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\ob}{Ob}
+\DeclareMathOperator{\Hom}{Hom}
+
+% inner product
+\newcommand{\inp}[2]{\left\langle #1 , #2 \right\rangle}
+
+% matrix stuff
+\newcommand{\bmatr}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\pmatr}[1]{\begin{pmatrix}#1\end{pmatrix}}
+\newcommand{\vmatr}[1]{\begin{vmatrix}#1\end{vmatrix}}
+\newcommand{\transpose}[1]{{#1}^{\intercal}}
+\newcommand{\tr}[1]{\textfn{tr}{#1}}
+
+% norm
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+
+% projection
+\newcommand{\proj}[2][]{\text{proj}_{#1}\paren{#2}}
+
+\begin{document}
+
+\chapter{Introduction to Categories}
+
+\section{Categories}
+\begin{definition}[Category]
+  A \emph{category} $\mathscr{C}$ consists of a collection of mathematical structures, called the objects, denoted by $\ob(\mathscr{C})$, and a class of morphisms (or arrows), denoted by $\Hom(\mathscr{C})$,  between the objects. The morphisms must obey the following axioms:
+  \begin{enumerate}[i.]
+    \item If $A, B, C$ in $\mathscr{C}$, $f : A \rightarrow B$, and $g : B \rightarrow C$, then there is a morphism $g \circ f : A \rightarrow C$ (composition).
+    \item For each $X$ in $\mathscr{C}$, there exists an identity function. That is, there exists a function  $\id_X : X \rightarrow X$ such that for every morphism $f : A \rightarrow X$ and every morphism $g : X \rightarrow A$, we have $\id_X \circ f = f$ and $g \circ id_X = g$.
+    \item The composition is associative. That is, whenever we have $f : A \rightarrow B$, $g : B \rightarrow C$, and $h : C \rightarrow D$, then $(h \circ g) \circ f = h \circ (g \circ f)$.
+  \end{enumerate}
+\end{definition}
+
+\begin{defexample}[$\mathbf{Set}$]
+  The category of sets, denoted by $\mathbf{Set}$, is a category where the objects are sets and the morphism are functions.
+\end{defexample}
+
+\begin{defexample}[$\mathbf{Cat}$]
+  $\mathbf{Cat}$ is a category where the objects are small categories (categories where $\ob(\mathscr{C})$ and $\Hom(\mathscr{C})$ are actual sets, not classes) and the morphisms are functors.
+\end{defexample}
+
+\begin{defexample}[The opposite category]
+  Every category $\mathscr{C}$ has an \emph{opposite category} $\mathscr{C}^{op}$. The objects in this category are the exact same as those in $\mathscr{C}$, but the morphisms (arrows) point the other direction. In other words, $\Hom_{\mathscr{C}^{op}}(X, Y) = \Hom_\mathscr{C}(Y, X)$. Note that in category theory, morphisms do not need to be actual functions.
+\end{defexample}
+
+\section{Functors}
+\begin{definition}[Functor]
+  A \emph{functor} is a mapping between categories. Specifically, if $\mathscr{C}$ and $\mathscr{D}$ are categories, then a functor $F$ from $\mathscr{C}$ to $\mathscr{D}$ does the following:
+  \begin{enumerate}[i.]
+    \item maps an object $X$ in $\mathscr{C}$ with $F(X)$ in $\mathscr{D}$ (for every $X$).
+    \item for every morphism $f$ in $\Hom(X, Y)$, the functor maps $f$ to $F(f)$ with $F(f)$ in $\Hom(F(X), F(Y))$, for every $X, Y$ in $\mathscr{C}$ and $F(X), F(Y)$ in $\mathscr{D}$.
+  \end{enumerate}
+  such that the following axioms hold:
+  \begin{enumerate}[i.]
+    \item $F(\id_X) = \id_{F(X)}$ for every $X$ in $\mathscr{C}$.
+    \item $F(g \circ f) = F(g) \circ F(f)$ for every morphism $f, g$.
+  \end{enumerate}
+\end{definition}
+
+\begin{defexample}[Power set]
+  The power set $P : \mathbf{Set} \rightarrow \mathbf{Set}$ is a functor. A functor which maps a category to itself is called an \emph{endofunctor}.
+\end{defexample}
+
+\begin{defexample}[Forgetful functor]
+  The functor $F : \mathbf{Grp} \rightarrow \mathbf{Set}$ defined by sending a group to its underlying set and sending a group homomorphism to its underlying set function is functor.
+\end{defexample}
+
+\begin{defexample}[Opposite functor]
+  Just like opposite categories, each functor admits an \emph{opposite functor}. If $F : \mathscr{C} \rightarrow \mathscr{D}$, then $F^{op} : \mathscr{C}^{op} \rightarrow \mathscr{D}^{op}$.
+\end{defexample}
+
+\begin{defexample}[Contravariant functor]
+  Let $\mathbf{Vect}_\mathbbm{k}$ be the category of vector spaces over a field $\mathbbm{k}$, where the morphisms are linear transformations. Let $F : \mathbf{Vect}_\mathbbm{k} \rightarrow \mathbf{Vect}_\mathbbm{k}$ be the functor that sends a vector space $V$ to its dual space $V^* = \Hom(V, \mathbbm{k})$. It is clear what this functor does to objects, but what about morphisms? What is the result of applying $F$ to linear transformations? Suppose we had vector spaces $V$ and $W$ and linear transformations $f : V \rightarrow W$, $\psi : V \rightarrow \mathbbm{k}$:
+  \[\begin{tikzcd}[column sep=small]
+    V \arrow[swap]{dr}{\psi} \arrow{rr}{f} & & W \arrow[dl, dashrightarrow, "?"] \\
+    & \mathbbm{k}
+  \end{tikzcd}\]
+  How are we supposed to take $\psi$ and $f$ to create a map $F(f)$ from $W$ to $\mathbbm{k}$? From the diagram, this looks impossible. But it also hints at a solution. If we instead start with a linear transform $\phi : W \rightarrow \mathbbm{k}$, then we can define $\psi = \phi \circ f$. We can thus define $F(f) := f^*$, called a \emph{pullback}, which takes $\phi : W \rightarrow \mathbbm{k}$ to $\phi \circ f : V \rightarrow \mathbbm{k}$. In other words, $f^*(\phi) = \phi \circ f$. Notice that this endofunctor reverses the arrows of the morphisms. If $F$ send $V$ to $W$, then $F$ sends $\Hom(W, \mathbbm{k})$ to $\Hom(V, \mathbbm{k})$. This is called a \emph{contravariant functor}.
+\end{defexample}
+
+\begin{definition}
+  A functor is \emph{full} if it is ``surjective'', \emph{faithful} if it is ``injective'', and \emph{fully faithful} if it is ``bijective''.
+\end{definition}
+
+\begin{theorem}
+  Let $X, Y$ be objects of a category $\mathscr{C}$ and $F : \mathscr{C} \rightarrow \mathscr{D}$ a fully faithful functor. If $F(X) \cong F(Y)$, then $X \cong Y$.
+\end{theorem}
+
+\begin{proof}
+  Let $h : F(X) \rightarrow F(Y)$ be an isomorphism with inverse $h^{-1}$. Since $F$ is fully faithful, we must be able to find a unique morphism $f : X \rightarrow Y$ satisfying $F(f) = h$. Similarly, we can also find a $g : Y \rightarrow X$ such that $F(g) = h^{-1}$. Then:
+  \[\id_{F(X)} = h^{-1} \circ h = F(g) \circ F(f) = F(fg).\]
+  But by defintion of a functor, $\id_{F(X)} = F(\id_X)$, so we have that
+  \[F(fg) = F(\id_X).\]
+  Since $F$ is fully faithful, $fg = \id_X$. A similar argument shows that $gf = \id_Y$, establishing the isomorphism.
+\end{proof}
+
+\section{Natural Transformations}
+
+\begin{definition}[Natural Transformation]
+  Let $F$ and $G$ both be functors from a category $\mathscr{C}$ to a category $\mathscr{D}$. A \emph{natural transformation} $\eta : F \Rightarrow G$ is a family of morphisms that satisfies the following:
+  \begin{enumerate}[i.]
+    \item For all $X$ in $\mathscr{C}$, there is a morphism $\eta_X : F(X) \rightarrow G(X)$, called the component of $\eta$ at $X$.
+    \item For all morphisms $f : X \rightarrow Y$ in $\Hom(\mathscr{C})$, $G(f) \circ \eta_X = \eta_Y \circ F(f)$. Equivalently, this condition is satisfied if and only if the following diagram commutes:
+    \[\begin{tikzcd}[row sep=large, column sep = large]
+      F(X) \arrow{r}{\eta_X} \arrow[swap]{d}{F(f)} & G(X) \arrow{d}{G(f)} \\
+      F(Y) \arrow[swap]{r}{\eta_Y} & G(Y)
+    \end{tikzcd}\]
+    A diagram \emph{commutes} if taking any path from point A to point B gives equivalent results.
+  \end{enumerate}
+\end{definition}
+
+\begin{defexample}
+  Of course, the identity transformation is a natural transformation.
+  \[\begin{tikzcd}[row sep=large, column sep = large]
+    F(X) \arrow{r}{\id_X} \arrow[swap]{d}{F(f)} & F(X) \arrow{d}{F(f)} \\
+    F(Y) \arrow[swap]{r}{\id_Y} & F(Y)
+  \end{tikzcd}\]
+\end{defexample}
+
+\begin{remark}
+  The word ``natural" or ``canonical" is used in mathematics to describe relationships that arise natural from construction. Intuitively, we can think of it as if two people were to define a relationship independently, they end up with the same thing. For example, the canonical map from a set $S$ to its power set $\mathcal{P}(S)$ is defined by $a \mapsto \{a\}$, and the Jordan Canonical Form is named that way because there is only one (up to isomorphism) JCF for each similarity class of linear transformations.
+\end{remark}
+
+\begin{defexample}
+  Let $V$ be a finite dimensional vector space. Then there is a natural transformation from $V$ to $V^{**}$, the double dual of $V$. If $V$ and $W$ be finite dimensional vector spaces, and $T: V \rightarrow W$ is a linear transformation, we can define the natural transformations like so: 
+  \begin{align*}
+    \eta_V(v) &= \text{eval}_v \\
+    \eta_W(w) &= \text{eval}_w
+  \end{align*}
+  where eval$_v$ takes an element $f: V \rightarrow \mathbbm{k}$ from $V^*$ and applies $v$ to it. Equationally, this translates to eval$_v = f(v)$. Now consider the following diagram:
+  \[\begin{tikzcd}[row sep=large, column sep = large]
+    V \arrow{r}{\text{eval}_v} \arrow[swap]{d}{T} & V^{**} \arrow{d}{T**} \\
+    W \arrow[swap]{r}{\text{eval}_w} & W^{**}
+  \end{tikzcd}\]
+  Is it commutative? Yes, it is! However, the reader is encouraged to check it themselves.
+\end{defexample}
+
+\begin{remark}
+Although there is also an isomorphism $V \cong V^*$, the isomorphism is not ``natural" in any way. To even define a map from $V$ to $V^*$, we have to choose a basis; and you know that when you need to choose a basis your life is already going downhill. For every different basis we pick, we get a different isomorphism. In fact, it can be shown that there is \emph{no} ``natural'' isomorphism between $V$ and $V^*$.
+\end{remark}
+
+\begin{definition}[Representable functors]
+  Let $\mathscr{C}$ be a locally small category, and for each object $A$ in $\mathscr{C}$ let $\Hom(A, -)$ be the functor that maps $X$ to the set $\Hom(A, X)$. A functor $F : \mathscr{C} \rightarrow \mathbf{Set}$ is said to be \emph{representable} if there is a natural transformation from $F$ to $\Hom(A, -)$ for some object $A$ in $\mathscr{C}$. A \emph{representation} is a pair $(A, \Phi)$ such that $\Phi : \Hom(A, -) \rightarrow F$ is a natural transformation.
+\end{definition}
+
+\begin{defexample}
+  Let $F : \mathbf{Grp} \rightarrow \mathbf{Set}$ be the functor that sends a group to its underlying set. Then $(\Z, 1)$ is a representation of $F$.
+\end{defexample}
+
+\begin{proof}
+  We would like to establish the natural transformation $\Phi: \Hom(\Z, -) \rightarrow F$. Let $G$ be an object in $\mathbf{Grp}$, then for each $g$ in $G$, there is a unique homomorphism satisfying $1 \mapsto g$. This sets up a bijection between $F(G)$ and $\Hom(\Z, G)$. Since we can do this for every group, let us define this mapping to $\Phi_G$, the component of $\Phi$ at $G$. Now let us verify $\Phi$ is natural. Let $G, H$ be groups and $f$ be a (group) homomorphism.
+  \[\begin{tikzcd}[row sep=large, column sep = large]
+    F(G) \arrow{r}{\Phi_G} \arrow[swap]{d}{F(f)} & \Hom(\Z, G) \arrow{d}{\Hom(\Z, f)} \\
+    F(H) \arrow[swap]{r}{\Phi_H} & \Hom(\Z, H)
+  \end{tikzcd}\]
+  Recall that if $g$ in $\Hom(A,f)$, then $g \mapsto f \circ g$, so this diagram does indeed commute.
+\end{proof}
+We can do similar things to other forgetful functors (try it yourself for $\mathbf{Ring}$).
+
+\chapter{Yoneda's Lemma}
+
+\section{The Yoneda Embedding}
+The Yoneda embedding is a special case of the Yoneda lemma, but we'll work through this first before moving on to the general version.
+\begin{corollary}[The Yoneda Embedding] Let $\mathscr{C}$ be a locally small category (recall that locally small means that $\Hom(\mathscr{C})$ are actual sets). Then there is a natural functor $F$ from $\mathscr{C}$ to $\mathbf{Set}$.
+\end{corollary}
+
+\begin{proof}
+Let $X$ be an object in $\mathscr{C}$ and define $H_A(X) = \Hom(A, X)$, for all $A$ in $\mathscr{C}$, the set of all morphisms to $X$. Now for any morphism $f : X \rightarrow Y$,  we want to map it to some morphism $H_A(f) : H_A(X) \rightarrow H_A(Y)$. Note that objects of $H_A(X)$ are morphisms themselves, $u : A \rightarrow X$ for some object $A$ in $\mathscr{C}$. Thus we can simply define $H_A(f) = f \circ u$.
+\end{proof}
+
+\begin{theorem}[Yoneda's Lemma]
+  Let $\mathscr{C}$ be a locally small category, $F : \mathscr{C} \rightarrow \mathbf{Set}$ a functor, and $H^A = \Hom(A, -)$. Then
+  \[\mathbf{Set}^\mathscr{C}(H^A, F) \cong F(A).\]
+  That is, there is a one-to-one correspondence between the natural tranformations from $H^A$ to $F$ and the elements of $F(A)$.
+\end{theorem}
+
+\begin{proof}
+  Let $X$ be an object in $\mathscr{C}$ and $a$ in $X$. Define the natural transformation $\eta$ by declaring each component $\eta_X : \Hom(A, X) \rightarrow F(X)$ to be the map $g \mapsto (F(g))(a)$.
+\end{proof}
+
+\begin{corollary}
+  Let $X, Y$ be objects in a category $\mathscr{C}$. Then the Yoneda embedding $\mathscr{Y} : \mathscr{C} \rightarrow \mathbf{Set}^\mathscr{C}$ given by \[\Hom(X, Y) \mapsto \mathbf{Set}^\mathscr{C}(\Hom(X, -), \Hom(Y, -))\] is full and faithful.
+\end{corollary}
+
+\begin{corollary}
+  Let $X, Y$ be objects in a category $\mathscr{C}$. Then 
+  \[X \cong Y \text{ if and only if } \Hom(X, -) \cong \Hom(Y, -).\]
+\end{corollary}
+
+\begin{corollary}[Cayley's Theorem]
+  Let $G$ be a group. Then $G$ is isomorphic to a subgroup of the symmetric group acting on $G$.
+\end{corollary}
+
+\begin{proof}
+  For every group $G$, we can view it as a category $\mathscr{G}$ consisting of a single object $\bullet$ where the (iso)morphisms are the group elements. Let $F: \mathscr{G} \rightarrow \mathbf{Set}$ be the functor that maps $\bullet$ to the underlying set $X$ and morphisms $g$ to a function $x \mapsto gx$. In particular, $F = \Hom(\bullet, -)$. According to Yoneda, we have:
+  \[\mathbf{Set}^\mathscr{G}(\Hom(\bullet, -), \Hom(\bullet, -)) \cong \Hom(\bullet, \bullet).\]
+  Notice that the right hand side is actually $G$ itself. As for the left hand side, let us consider the components $\eta_g : G \rightarrow G$ in $\mathbf{Set}^\mathscr{G}(\Hom(\bullet, \bullet), \Hom(\bullet, \bullet))$. These, however, were just the maps $x \mapsto gx$ we defined earlier, which are the automorphisms of G. Thus the left hand side is a subgroup of the symmetric group acting ong $G$, and the right hand side is $G$, and we are done.
+\end{proof}
+\end{document}
